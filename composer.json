@@ -1,0 +1,15 @@
+{
+	"name": "getstorage/api",
+	"description": "The GetStorage API",
+	"minimum-stability": "stable",
+	"license": "UNLICENSE",
+	"authors": [
+		{
+			"name": "Luke Strickland",
+			"email": "luke@axxim.net"
+		}
+	],
+	"require": {
+		"klein/klein": "v2.0.2"
+	}
+}

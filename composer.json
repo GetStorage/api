@@ -10,6 +10,7 @@
 		}
 	],
 	"require": {
-		"klein/klein": "v2.0.2"
+		"klein/klein": "v2.0.2",
+		"mardy-git/hmac": "dev-master"
 	}
 }

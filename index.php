@@ -9,10 +9,23 @@ use Mardy\Hmac\Storage\NonPersistent as HmacStorage;
 $klein = new \Klein\Klein();
 
 $klein->respond(function($request, $response, $service, $app) {
-    $app->register('db', function() {
-        $db = new stdClass();
+    $app->config = require_once __DIR__ . '/config.php';
+
+    $app->register('db', function() use ($app) {
+        $cfg = $app->config['mysql'];
+
+        $db = new PDO('mysql:host='.$cfg['hostname'].';dbname='.$cfg['database'].';charset=UTF-8', $cfg['username'], $cfg['password']);
 
         return $db;
+    });
+
+    $app->register('parseKey', function($auth) {
+        $exploded = explode(':', $auth);
+        if(count($exploded) != 2) {
+            return false;
+        }
+
+        return array('key' => $exploded[0], 'secret' => $exploded[1]);
     });
 });
 
@@ -32,7 +45,8 @@ $klein->with('/v2', function() use ($klein) {
             $service->auth_key = $headers['auth-key'];
             $service->auth_secret = $headers['auth-secret'];
 
-            if(empty($service->auth_key) || empty($service->auth_secret)) {
+            $authorization = $app->parseKey($headers['Authorization']);
+            if(!$authorization) {
                 return $response->json("Nope");
             }
 
